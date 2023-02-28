@@ -167,4 +167,18 @@
 {{- template "partials/templates/opengraph.html" . }}
 {{- template "partials/templates/twitter_cards.html" . }}
 {{- template "partials/templates/schema_json.html" . }}
+
+{{ with site.Params.googleAnalytics }}
+
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XTSL6PN62G"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-XTSL6PN62G');
+   </script>
+{{ end }}
+
+
 {{- end -}}
