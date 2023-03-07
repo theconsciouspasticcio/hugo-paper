@@ -1,67 +1,112 @@
 {{- /*  hugo-video shortcode
 /*
-/*    This file is part of hugo-video shortcode.
-/*    A Hugo component shortcode to embed videos using the HTML video element.
-/*
-/*    @copyright  @2019 onwards Nicolas Martignoni (nicolas@martignoni.net)
 /*    @source     https://github.com/martignoni/hugo-video
 /*    @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 /*
 */ -}}
 
-{{- $video_src := .Get "src" -}}
-{{- $video_mp4 := "" -}}
-{{- $video_webm := "" -}}
-{{- $video_ogg := "" -}}
-{{- $video_dl := "" -}}
-{{- $width := "100%" -}}
-{{- $filenotfound := true -}}
-{{- $unsupportedfile := true -}}
+{{/*
 
-{{- /* Find all files with filename (without suffix) matching "src" parameter. */ -}}
-{{- $video_files := (.Page.Resources.Match (printf "%s*" $video_src)) -}}
+    ## Video.js Player
 
-{{- /* Find first image file with filename (without suffix) matching "src" parameter. */ -}}
-{{- $poster := ((.Page.Resources.ByType "image").GetMatch (printf "%s*" $video_src)) -}}
+    ### Params:
 
-{{- /* Find in page bundle all valid video files with matching name. */ -}}
-{{- with $video_files -}}
-  {{- $filenotfound = false -}}
-  {{- range . -}}
-    {{- if or (in .MediaType.Suffixes "mp4") (in .MediaType.Suffixes "m4v") -}}
-      {{- $unsupportedfile = false -}}
-      {{- $video_mp4 = . -}}
-    {{- end -}}
-    {{- if (in .MediaType.Suffixes "webm") -}}
-      {{- $unsupportedfile = false -}}
-      {{- $video_webm = . -}}
-    {{- end -}}
-    {{- if (in .MediaType.Suffixes "ogv") -}}
-      {{- $unsupportedfile = false -}}
-      {{- $video_ogg = . -}}
-    {{- end -}}
-  {{- end -}}
-{{- end -}}
+    - Video `mp4`
 
-{{- if $filenotfound -}}
-  {{- /* No file of given name was found, we stop here. */ -}}
-  {{- errorf "No file with filename %q found." $video_src -}}
-{{- else if $unsupportedfile -}}
-  {{- errorf "No valid video file with filename %q found." $video_src -}}
-{{- else -}}
-<video {{ if ne (.Get "controls") "false" }}controls {{ end }}preload="auto" width="{{ or (.Get "width") $width }}" {{ with .Get "height" }}height="{{.}}"{{ end }} {{ if eq (.Get "autoplay") "true" }}autoplay {{ end }}{{ if eq (.Get "loop") "true" }}loop {{ end }}{{ if eq (.Get "muted") "true" }}muted {{ end }}{{ with $poster }}poster="{{ .RelPermalink }}" {{ end }}playsinline class="html-video">
-  {{- with $video_webm }}
-    <source src="{{ .RelPermalink }}" type="video/webm">
-    {{- $video_dl = . -}}
-  {{- end }}
-  {{- with $video_ogg }}
-    <source src="{{ .RelPermalink }}" type="video/ogg">
-    {{- $video_dl = . -}}
-  {{- end }}
-  {{- with $video_mp4 }}
-    <source src="{{ .RelPermalink }}" type="video/mp4">
-    {{- $video_dl = . -}}
-  {{- end }}
-  <span>{{ i18n "videoUnsupported" $video_dl | safeHTML}}</span>
-</video>
-{{- end -}}
+      required param
+      mp4 video url or path
+      url format "//vjs.zencdn.net/v/oceans.mp4"
+      path format "/media/posts/hugo-nuo-post-preview/videojs.mp4"
+
+    - Video `webm`
+
+      required param
+      mp4 video url or path
+      url format "//vjs.zencdn.net/v/oceans.webm"
+      path format "/media/posts/hugo-nuo-post-preview/videojs.webm"
+
+  - Video `ogv`
+
+      required param
+      ogv video url or path
+      url format "//vjs.zencdn.net/v/oceans.ogv"
+      path format "/media/posts/hugo-nuo-post-preview/videojs.ogv"
+
+    - Video `poster`
+
+      optional param
+      default value "/img/poster.jpg"
+      you can overwrite it with your photo (16:9)
+
+    ### Examples:
+
+    - Simple
+
+      {{% video
+        "/media/posts/hugo-nuo-post-preview/videojs.mp4"
+        "/media/posts/hugo-nuo-post-preview/videojs.webm"
+        "/media/posts/hugo-nuo-post-preview/videojs.ogv"
+      %}}
+
+       {{% video
+        "/media/posts/hugo-nuo-post-preview/videojs.mp4"
+        "/media/posts/hugo-nuo-post-preview/videojs.webm"
+        "/media/posts/hugo-nuo-post-preview/videojs.ogv"
+        "/img/poster.jpg"
+      %}}
+
+    - Named Params
+
+      {{%
+        video mp4="/media/posts/hugo-nuo-post-preview/videojs.mp4"
+        webm="/media/posts/hugo-nuo-post-preview/videojs.webm"
+        ogv="/media/posts/hugo-nuo-post-preview/videojs.ogv"
+      %}}
+
+      {{%
+        video mp4="/media/posts/hugo-nuo-post-preview/videojs.mp4"
+        webm="/media/posts/hugo-nuo-post-preview/videojs.webm"
+        ogv="/media/posts/hugo-nuo-post-preview/videojs.ogv"
+        poster="/img/poster.jpg"
+      %}}
+
+*/}}
+
+{{/* DEFAULTS */}}
+{{ $poster := "/img/poster.jpg" }}
+
+<!-- {{ if .IsNamedParams }} -->
+
+<!--   <video id="my-player" class="video-js vjs-big-play-centered" controls preload="auto" poster="{{ or (.Get "poster") $poster }}" data-setup="{}"> -->
+<!--     <source src="{{ .Get "mp4" }}" type="video/mp4"></source> -->
+<!--     <source src="{{ .Get "webm" }}" type="video/webm"></source> -->
+<!--     <source src="{{ .Get "ogv" }}" type=video/ogg></source> -->
+<!--     <p class="vjs-no-js">To view this video please enable JavaScript, and consider upgrading to a web browser that <a href="http://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a></p> -->
+<!--   </video> -->
+
+<!-- {{ else }} -->
+
+<!--   <video id="my-player" class="video-js vjs-big-play-centered" controls preload="auto" poster="{{ if isset .Params 3 }}{{ .Get 3 }}{{ else }}{{ $poster }}{{ end }}" data-setup="{}"> -->
+<!--     <source src="{{ .Get 0 }}" type="video/mp4"></source> -->
+<!--     <source src="{{ .Get 1 }}" type="video/webm"></source> -->
+<!--     <source src="{{ .Get 2 }}" type="video/ogg"></source> -->
+<!--     <p class="vjs-no-js">To view this video please enable JavaScript, and consider upgrading to a web browser that <a href="http://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a></p> -->
+<!--   </video> -->
+
+<!-- {{ end }} -->
+
+
+
+    <!-- {{ if .IsNamedParams }} -->
+    <!-- 	<video src="{{ .Get "src" }}" poster="{{ .Get "poster" }}" autoplay loop playsinline> -->
+    <!-- 		Sorry, your browser doesn't support embedded videos, but don't worry, you can -->
+    <!-- 		<a href="{{ .Get "src" }}">download it</a> -->
+    <!-- 		and watch it with your favorite video player! -->
+    <!-- 	</video> -->
+    <!-- {{ else }} -->
+    <!-- 	<video src="{{ .Get 0}}"> -->
+    <!-- 		Sorry, your browser doesn't support embedded videos, but don't worry, you can -->
+    <!-- 		<a href="{{ .Get 0}}">download it</a> -->
+    <!-- 		and watch it with your favorite video player! -->
+    <!-- 	</video> -->
+    <!-- {{ end }} -->
