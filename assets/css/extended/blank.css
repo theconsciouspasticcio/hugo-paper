@@ -3,3 +3,23 @@ This is just a placeholder blank stylesheet so as to support adding custom style
 
 Read https://github.com/adityatelange/hugo-PaperMod/wiki/FAQs#bundling-custom-css-with-themes-assets for more info
 */
+
+.alert {
+  position: relative;
+  padding: 0rem 1rem;
+  margin-bottom: 1rem;
+  border: 1px solid transparent;
+}
+
+.alert-warning {
+  border-style: solid;
+  border-color: #ed6a5a;
+  border-width: 0 0 0 4px;
+}
+
+.alert-heading {
+  font-family: sans-serif;
+  font-size: 1.5rem;
+  color: #ed6a5a;
+  weight: bold;
+}
